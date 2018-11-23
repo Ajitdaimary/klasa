@@ -640,9 +640,11 @@ declare module 'klasa' {
 	}
 
 	export class TextPrompt {
-		public constructor(message: KlasaMessage, usage: Usage, options: TextPromptOptions);
+		public constructor(message: KlasaMessage, usage: Usage, options?: TextPromptOptions);
 		public readonly client: KlasaClient;
 		public message: KlasaMessage;
+		public target: KlasaUser;
+		public channel: TextChannel | GroupDMChannel | DMChannel;
 		public usage: Usage | CommandUsage;
 		public reprompted: boolean;
 		public flags: ObjectLiteral<string>;
@@ -658,6 +660,7 @@ declare module 'klasa' {
 		private _currentUsage: Tag;
 
 		public run<T = any[]>(prompt: string): Promise<T>;
+		private prompt(text: string): Promise<KlasaMessage>;
 		private reprompt(prompt: string): Promise<any[]>;
 		private repeatingPrompt(): Promise<any[]>;
 		private validateArgs(): Promise<any[]>;
@@ -1239,7 +1242,6 @@ declare module 'klasa' {
 			readonly reprompted: boolean;
 			readonly reactable: boolean;
 			send(content?: StringResolvable, options?: MessageOptions): Promise<KlasaMessage | KlasaMessage[]>;
-			prompt(text: string, time?: number): Promise<KlasaMessage>;
 			usableCommands(): Promise<Collection<string, Command>>;
 			hasAtLeastPermissionLevel(min: number): Promise<boolean>;
 		}
@@ -1672,9 +1674,11 @@ declare module 'klasa' {
 
 	// Usage
 	export type TextPromptOptions = {
+		channel?: TextChannel | GroupDMChannel | DMChannel;
 		limit?: number;
-		time?: number;
 		quotedStringSupport?: boolean;
+		target?: KlasaUser;
+		time?: number;
 	};
 
 	// Util
